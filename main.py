@@ -1,9 +1,7 @@
-from shutil import ExecError
 import string
 import requests
 import os
 import threading
-from pystyle import Center
 from colorama import Fore, init
 import random
 
@@ -62,7 +60,7 @@ def update():
 def main():
     global tc, fbl, ol, lc, shit, fip
     os.system('cls')
-    print(Center.XCenter(Fore.BLUE + banner))
+    print(Fore.BLUE + banner)
     print('\n'*4)
     tc = int(input('     [>] How Much Threads You Want ? '))
     fbl = str(input('     [>] From Username List ? (Y/n) ? ')).lower()
