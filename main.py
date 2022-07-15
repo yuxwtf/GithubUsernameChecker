@@ -1,132 +1,35 @@
-import string
-import requests
-import os
-import threading
-from colorama import Fore, init
-import random
+import requests, random, string, threading, os
+from pystyle import *
 
-init()
+os.system('title github/x8g ^| Github User Checker')
+banner = """                                                                           
+8 8888      88    d888888o.   8 8888888888   8 888888888o.     d888888o.   
+8 8888      88  .`8888:' `88. 8 8888         8 8888    `88.  .`8888:' `88. 
+8 8888      88  8.`8888.   Y8 8 8888         8 8888     `88  8.`8888.   Y8 
+8 8888      88  `8.`8888.     8 8888         8 8888     ,88  `8.`8888.     
+8 8888      88   `8.`8888.    8 888888888888 8 8888.   ,88'   `8.`8888.    
+8 8888      88    `8.`8888.   8 8888         8 888888888P'     `8.`8888.   
+8 8888      88     `8.`8888.  8 8888         8 8888`8b          `8.`8888.  
+` 8888     ,8P 8b   `8.`8888. 8 8888         8 8888 `8b.    8b   `8.`8888. 
+  8888   ,d8P  `8b.  ;8.`8888 8 8888         8 8888   `8b.  `8b.  ;8.`8888 
+   `Y88888P'    `Y8888P ,88P' 8 888888888888 8 8888     `88. `Y8888P ,88P' """
 
-__lock__ = threading.Lock()
-fcl = False
-ol = False
-tc = 0
-lc = 0
-hits = 0
-takens = 0
-fails = 0
-tries = 0
+Anime.Fade(Center.Center(banner), Colors.blue_to_purple, Colorate.Vertical, interval=0.01, time=5)
 
-def safeprint(str):
-    __lock__.acquire()
-    print(str)
-    __lock__.release()
+user = string.ascii_uppercase + string.ascii_lowercase + string.digits
+threads = input(Colorate.Horizontal(Colors.blue_to_purple, 'Threads: '))
+num = (int(input(Colorate.Horizontal(Colors.blue_to_purple, '3Cs/3Ls | 4Cs/4Ls (3 \ 4): '))))
 
-def check(user):
-    try:
-        resp = requests.get(f'https://github.com/{user}')
-        if resp.status_code == 200:
-            return True, resp.status_code
-        elif resp.status_code == 404:
-            return False, resp.status_code
-        else:
-            return 'ratelimited', resp.status_code
-    except:
-        safeprint(Fore.RED + f'     [X] Failed')
-
-
-banner = """
-                          ▄▄ • ▪  ▄▄▄▄▄ ▄ .▄▄• ▄▌▄▄▄▄·      ▄▄·  ▄ .▄▄▄▄ . ▄▄· ▄ •▄ ▄▄▄ .▄▄▄  
-                         ▐█ ▀ ▪██ •██  ██▪▐██▪██▌▐█ ▀█▪    ▐█ ▌▪██▪▐█▀▄.▀·▐█ ▌▪█▌▄▌▪▀▄.▀·▀▄ █·
-                         ▄█ ▀█▄▐█· ▐█.▪██▀▐██▌▐█▌▐█▀▀█▄    ██ ▄▄██▀▐█▐▀▀▪▄██ ▄▄▐▀▀▄·▐▀▀▪▄▐▀▀▄ 
-                         ▐█▄▪▐█▐█▌ ▐█▌·██▌▐▀▐█▄█▌██▄▪▐█    ▐███▌██▌▐▀▐█▄▄▌▐███▌▐█.█▌▐█▄▄▌▐█•█▌
-                         ·▀▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀ · ▀▀▀ ·▀▀▀▀     ·▀▀▀ ▀▀▀ · ▀▀▀ ·▀▀▀ ·▀  ▀ ▀▀▀ .▀  ▀
-                                                     yuxontop
-                """.replace('.', Fore.RED+'.'+Fore.BLUE).replace('▪', Fore.RED+'▪'+Fore.BLUE).replace('·', Fore.RED+'·'+Fore.BLUE)
-
-def get_random_string(lenght):
-    if ol == True:
-        return ''.join(random.choice(string.ascii_lowercase) for i in range(lenght))
-    else:
-        return ''.join(random.choice(string.ascii_lowercase+str(string.digits)) for i in range(lenght))
-                    
-
-def update():
-    global fails, hits, takens, tries, tc
+def check():
     while True:
-        os.system(f'title GithubUsernameChecker ^| github.com/yuxontop ^| Fails: {fails} ^| Hits: {hits} ^| Taken: {takens} ^| Tries: {tries} ^| Threads: {tc}')
-
-
-def main():
-    global tc, fbl, ol, lc, shit, fip
-    os.system('cls')
-    print(Fore.BLUE + banner)
-    print('\n'*4)
-    tc = int(input('     [>] How Much Threads You Want ? '))
-    fbl = str(input('     [>] From Username List ? (Y/n) ? ')).lower()
-    if fbl == 'y':
-        fbl = True
-        fip = str(input('     [>] Username File Name (leave blank for default) ? '))
-        if fip == '':
-            fip = 'usernames.txt'
-    else:
-        fbl = False
-        lc = int(input('     [>] Usernames Length ? '))
-        ol = str(input('     [>] Do You Want Only Letters In Usernames (Y/n) ? ')).lower()
-        if ol == 'y':
-            ol = True
-        else:
-            ol = False
-    ut = threading.Thread(target=update)
-    ut.start()
-    print('\n'*3)
-    for thread in range(tc):
-        t = threading.Thread(target=Checker)
-        t.start()
-        
-
-def Checker():
-    global tc, fbl, ol, lc, shit, hits, takens, fails, tries, fip
-    if fbl:
-        with open(fip, 'r+') as f:
-            f = f.read().splitlines()
-            for username in f:
-                try:
-                    ia = check(username)
-                    tries += 1
-                    if ia[0] == False and ia[1] == 404:
-                        safeprint(Fore.GREEN + f'     [+] {username} Is Available !')
-                        hits += 1
-                    elif ia[0] == True and ia[1] == 200:
-                        takens += 1
-                        safeprint(Fore.RED + f'     [-] {username} Is Taken !')
-                except Exception as e:
-                    fails += 1
-                    safeprint(Fore.RED + f'     [X] Failed')
-
-    else:
-        while True:
-            username = get_random_string(lc)
-            ia = check(username)
-            tries += 1
-            try:
-                if ia[0] == False and ia[1] == 404:
-                    safeprint(Fore.GREEN + f'     [+] {username} Is Available !')
-                    hits += 1
-                elif ia[0] == True and ia[1] == 200:
-                    takens += 1
-                    safeprint(Fore.RED + f'     [-] {username} Is Taken !')
-            except Exception as e:
-                fails += 1
-                safeprint(Fore.RED + f'     [X] Failed')
-
-
-
-
-    
-
-
-
-
-if __name__ == __name__:
-    main()
+        userx = ''.join(random.choice(user) for _ in range(num))
+        gb = requests.get(f'https://api.github.com/users/{userx}')
+        if 'id' in gb.text:
+            print(Colorate.Horizontal(Colors.blue_to_white, f'[+] github.com/{userx} | available'))
+            with open('avail.txt', 'a') as users:
+             users.write(f'github.com/{userx} | https://github.com/x8g\n')
+        if 'message' in gb.text:
+             print(Colorate.Horizontal(Colors.blue_to_cyan, f'[X] github.com/{userx} | taken'))
+while True:
+        if threading.active_count() < int(threads):
+            threading.Thread(target=check).start()
