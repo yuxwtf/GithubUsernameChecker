@@ -4,6 +4,7 @@ import os
 import threading
 from colorama import Fore, init
 import random
+import ascii2text
 
 init()
 
